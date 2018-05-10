@@ -40,7 +40,6 @@ chmod -R +x "$PAYLOAD_APP_PATH"
 zip -r "$TARGET_APP_NAME"".zip" Payload
 
 mv "$TARGET_APP_NAME"".zip" "$TARGET_APP_NAME"".ipa"
-open "$PAYLOAD_APP_PATH/info.plist"
 
 #clear
 rm -r entitlements_full.plist
@@ -48,44 +47,7 @@ rm -r entitlements.plist
 rm -r Payload
 rm -r "$TARGET_IPA_NAME"
 
-
-
-function unzipIPA{
-    #unzip -u "$TARGET_IPA_PATH" -d "$TARGET_IPA_NAME"
-}
-
-function sign{
-    cp -rf "$TARGET_IPA_NAME""/Payload" "Payload"
-
-    security cms -D -i "embedded.mobileprovision" > "entitlements_full.plist"
-
-    /usr/libexec/PlistBuddy -x -c 'Print:Entitlements' entitlements_full.plist > entitlements.plist
-
-    rm -r "$PAYLOAD_APP_PATH""/_CodeSignature"
-
-    /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier com.esurfingpay.bestpayDev" "$PAYLOAD_APP_PATH""/info.plist"
-
-    cp embedded.mobileprovision "$PAYLOAD_APP_PATH"
-
-    #递归赋权限
-    chmod -R +x "$PAYLOAD_APP_PATH"
-
-    /usr/bin/codesign --continue -f -s "iPhone Distribution: ChinaTelecom Bestpay Co. Ltd" --entitlements "entitlements.plist"  "$PAYLOAD_APP_PATH"
-
-
-    zip -r "$TARGET_APP_NAME"".zip" Payload
-
-    mv "$TARGET_APP_NAME"".zip" "$TARGET_APP_NAME"".ipa"
-
-}
-
-function clear(){
-    rm -r "$APP_NAME"".zip"
-    rm -r entitlements_full.plist
-    rm -r entitlements.plist
-    rm -r Payload
-}
-
+ideviceinstaller -i "$TARGET_APP_NAME"".ipa"
 
 
 #  Created by Loren on 2018/2/24.
