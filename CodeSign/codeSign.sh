@@ -45,12 +45,13 @@ unzip -u "$TARGET_IPA_PATH" -d "$TARGET_IPA_NAME"
 
 
 #解压的App路径
-UNZIP_APP_PATH=$(find  "$TARGET_IPA_NAME""/Payload"  -name  "*.app" | head -n 1)
+UNZIP_APP_PATH=$(find  "$TARGET_IPA_NAME" -type d | grep ".app$" | head -n 1)
 #app名字
 TARGET_APP_NAME=$(basename "$UNZIP_APP_PATH" .app)
 
 rm -rf "Payload"
 mkdir "Payload"
+echo "$UNZIP_APP_PATH"
 cp -r "$UNZIP_APP_PATH" "Payload/"
 
 #Payload文件内的App路径
@@ -72,16 +73,17 @@ cp embedded.mobileprovision "$PAYLOAD_APP_PATH"
 chmod -R +x "$PAYLOAD_APP_PATH"
 #证书
 codesign "$PAYLOAD_APP_PATH"
-#zip -r "$TARGET_APP_NAME"".ipa" "Payload"
+
+zip -r "$TARGET_IPA_NAME"".ipa" "Payload"
 
 #clear
 #r把路径下的文件递归删除 f忽略不存的文件
 rm -rf entitlements_full.plist
 rm -rf entitlements.plist
-#rm -r Payload
+rm -r Payload
 rm -rf "$TARGET_IPA_NAME"
 
-installApp "Payload/$TARGET_APP_NAME"".app"
+installApp "$TARGET_IPA_NAME"".ipa"
 }
 
 star
